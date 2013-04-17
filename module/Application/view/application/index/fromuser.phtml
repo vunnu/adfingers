@@ -1,0 +1,30 @@
+<?php
+// module/Album/view/album/album/index.phtml:
+
+$title = 'Reviews';
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+<p>
+    <a href="<?php echo $this->url('home', array('action'=>'addreview'));?>">Add new review</a>
+</p>
+
+<table class="table">
+    <tr>
+        <th>Author</th>
+        <th>Title</th>
+        <th>Review</th>
+        <th>Rating</th>
+    </tr>
+    <?php foreach ($reviews as $review) : ?>
+        <tr>
+            <td><a href="<?php echo $this->url('home', array('action' => 'fromuser', 'id' => $review->userId)); ?>">
+                    <?php echo $this->escapeHtml($review->userId);?></a>
+            </td>
+            <td><?php echo $this->escapeHtml($review->title);?></td>
+            <td><?php echo $this->escapeHtml($review->text);?></td>
+            <td><?php echo $this->escapeHtml($review->rating);?></td>
+            <td><?php echo $this->escapeHtml($review->userId);?></td>
+        </tr>
+    <?php endforeach; ?>
+</table>

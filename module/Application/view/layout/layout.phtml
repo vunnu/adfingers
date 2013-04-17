@@ -1,0 +1,134 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle('ZF2 '. $this->translate('App Adfingers'))->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+                        ->prependStylesheet($this->basePath() . '/css/bootstrap-responsive.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/style.css')
+                        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css') ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+                                      ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+                                      ->prependFile($this->basePath() . '/js/jquery.min.js') ?>
+
+    </head>
+    <body>
+    <div id="fb-root"></div>
+    <script>
+
+        window.fbAsyncInit = function() {
+            // init the FB JS SDK
+            FB.init({
+                appId      : '162823253879692',                        // App ID from the app dashboard
+                channelUrl : '//WWW.INTRIGANTE.LT/adfingers/public/channel.html', // Channel file for x-domain comms
+                status     : true,                                 // Check Facebook Login status
+                xfbml      : true                                  // Look for social plugins on the page
+            });
+
+            FB.getLoginStatus(function(response) {
+                if (response.status === 'connected') {
+                    FB.api('/me', function(response) {
+                        addUser(response);
+                    });
+
+                } else if (response.status === 'not_authorized') {
+                    //logout();
+                    alert('not_authorized');
+                } else {
+                    alert('not connected');
+                }
+            });
+
+            FB.Event.subscribe('auth.authResponseChange', function(response) {
+                alert('The status of the session is: ' + response.status);
+                if(response.status == 'unknown')
+                {
+                    logout();
+                }
+            });
+        };
+
+        function addUser(response) {
+            jQuery.ajax({
+                type: "post"
+                , data: ({
+                    'name' : response.name,
+                    'email' : response.email,
+                    'userId' :response.id,
+                    'rights' : 1})
+                , dataType: "html"
+                , url: "http://www.intrigante.lt/adfingers/public/application/adduser"
+                , success: function(data) {
+                    //alert('success add user');
+                }
+                , error: function() { console.debug("error"); }
+            });
+        }
+
+        function logout()
+        {
+            alert('logout');
+            jQuery.ajax({
+                type: "post"
+                , data: ({
+
+                })
+                , dataType: "html"
+                , url: "http://www.intrigante.lt/adfingers/public/application/logout"
+                , success: function(data) {
+                    //alert('success logout');
+                }
+                , error: function() { console.debug("error"); }
+            });
+        }
+
+        // Load the SDK asynchronously
+        // Load the SDK Asynchronously
+        (function (d) {
+            var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+            if (d.getElementById(id)) {
+                return;
+            }
+            js = d.createElement('script');
+            js.id = id;
+            js.async = true;
+            js.src = "//connect.facebook.net/en_US/all/debug.js";
+            ref.parentNode.insertBefore(js, ref);
+        }(document));
+    </script>
+    <fb:login-button autologoutlink='true' scope='email' data-width="500"></fb:login-button>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="<?php echo $this->url('home') ?>"><?php echo $this->translate('App Adfingers') ?></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li class="active"><a href="<?php echo $this->url('home', array('action'=>'addreview')) ?>"><?php echo $this->translate('Write review') ?></a></li>
+                            <li class="active"><a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Home') ?></a></li>
+                        </ul>
+                    </div><!--/.nav-collapse -->
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <?php echo $this->content; ?>
+            <hr>
+            <footer>
+
+            </footer>
+        </div> <!-- /container -->
+        <?php echo $this->inlineScript() ?>
+    </body>
+</html>
